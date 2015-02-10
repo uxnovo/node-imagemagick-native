@@ -92,6 +92,7 @@ struct convert_im_ctx : im_ctx_base {
     int density;
     int flip;
     int grayscale;
+    bool upscale;
 
     std::string srcFormat;
 
@@ -254,15 +255,28 @@ void DoConvert(uv_work_t* req) {
         if ( ! width  ) { width  = image.columns(); }
         if ( ! height ) { height = image.rows();    }
 
+        double aspectratioExpected = (double)height / (double)width;
+
+        if ( ! context->upscale ) {
+            if(width > image.columns()) {
+                width = image.columns();
+                height = (unsigned int)( aspectratioExpected * width);
+            }
+            if(height > image.rows()) {
+                height = image.rows();
+                width = (unsigned int)( aspectratioExpected / height);
+            }
+        }
+
         // do resize
         if ( strcmp( resizeStyle, "aspectfill" ) == 0 ) {
             // ^ : Fill Area Flag ('^' flag)
             // is not implemented in Magick++
-            // and gravity: center, extent doesnt look like working as exptected
+            // and gravity: center, extent doesn't look like working as expected
             // so we do it ourselves
 
             // keep aspect ratio, get the exact provided size, crop top/bottom or left/right if necessary
-            double aspectratioExpected = (double)height / (double)width;
+
             double aspectratioOriginal = (double)image.rows() / (double)image.columns();
             unsigned int xoffset = 0;
             unsigned int yoffset = 0;
@@ -273,6 +287,7 @@ void DoConvert(uv_work_t* req) {
                 // expected is taller
                 resizewidth  = (unsigned int)( (double)height / (double)image.rows() * (double)image.columns() + 1. );
                 resizeheight = height;
+
                 if ( strstr(gravity, "West") != NULL ) {
                     xoffset = 0;
                 }
@@ -515,6 +530,9 @@ NAN_METHOD(Convert) {
     context->flip = obj->Get( NanNew<String>("flip") )->Uint32Value();
     context->grayscale = obj->Get( NanNew<String>("grayscale") )->Uint32Value();
     context->density = obj->Get( NanNew<String>("density") )->Int32Value();
+
+    Local<Value> upscaleValue = obj->Get( NanNew<String>("upscale") );
+    context->upscale = upscaleValue->IsUndefined() || upscaleValue->BooleanValue();
 
     Local<Value> trimValue = obj->Get( NanNew<String>("trim") );
     if ( (context->trim = ! trimValue->IsUndefined() && trimValue->BooleanValue()) ) {
