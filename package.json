@@ -7,7 +7,7 @@
     "resize",
     "convert"
   ],
-  "version": "1.8.0-beta.1",
+  "version": "1.9.2-beta.1",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -21,11 +21,10 @@
     "install": "node-gyp rebuild"
   },
   "engines": {
-    "node": "*"
+    "node": ">=0.10.0"
   },
   "dependencies": {
-    "nan": "~1.7.0",
-    "readable-stream": "*"
+    "nan": "2.x"
   },
   "devDependencies": {
     "tap": "*",
