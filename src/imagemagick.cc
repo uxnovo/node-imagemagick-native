@@ -538,10 +538,10 @@ NAN_METHOD(Convert) {
     context->quality = obj->Get( Nan::New<String>("quality").ToLocalChecked() )->Uint32Value();
     context->rotate = obj->Get( Nan::New<String>("rotate").ToLocalChecked() )->Int32Value();
     context->flip = obj->Get( Nan::New<String>("flip").ToLocalChecked() )->Uint32Value();
-    context->grayscale = obj->Get( NanNew<String>("grayscale").ToLocalChecked() )->Uint32Value();
+    context->grayscale = obj->Get( Nan::New<String>("grayscale").ToLocalChecked() )->Uint32Value();
     context->density = obj->Get( Nan::New<String>("density").ToLocalChecked() )->Int32Value();
 
-    Local<Value> upscaleValue = obj->Get( NanNew<String>("upscale").ToLocalChecked() );
+    Local<Value> upscaleValue = obj->Get( Nan::New<String>("upscale").ToLocalChecked() );
     context->upscale = upscaleValue->IsUndefined() || upscaleValue->BooleanValue();
 
     Local<Value> trimValue = obj->Get( Nan::New<String>("trim").ToLocalChecked() );
